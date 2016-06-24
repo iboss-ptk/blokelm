@@ -2,34 +2,29 @@ module Polymino.View exposing (..)
 
 import Polymino.Model exposing (..)
 import Polymino.Util as Util exposing (..)
-
-import Message exposing (..)
+import Polymino.Message exposing (..)
+import Polymino.Config exposing (..)
 
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Svg.Events exposing (..)
 
 
-blockSize : Int
-blockSize = 30
+-- View Implementation
+
+polyminoView : PolyminoModel -> Svg PolyminoSubMsg
+polyminoView model =
+  svg [] ( renderPolymino model.offset model.polymino )
 
 
-type alias Offset =
-  { x : Int
-  , y : Int
-  }
+-- Helpers
+
+renderPolymino : Offset -> Polymino -> List ( Svg PolyminoSubMsg )
+renderPolymino offset polymino =
+  List.map ( renderBlock polymino.color offset ) polymino.blocks
 
 
-strokeColor : String
-strokeColor = "#ecf0f1"
-
-
-toRealPos : Int -> Int -> String
-toRealPos offset index =
-  toString ( offset + index * blockSize )
-
-
-renderBlock : String -> Offset -> Block -> Svg Msg
+renderBlock : String -> Offset -> Block -> Svg PolyminoSubMsg
 renderBlock fillColor offset block =
   rect
     [ x ( toRealPos offset.x block.x )
@@ -41,6 +36,6 @@ renderBlock fillColor offset block =
     ] []
 
 
-renderPolymino : Offset -> Polymino -> List ( Svg Msg )
-renderPolymino offset polymino =
-  List.map ( renderBlock polymino.color offset ) polymino.blocks
+toRealPos : Int -> Int -> String
+toRealPos offset index =
+  toString ( offset + index * blockSize )

@@ -2,16 +2,17 @@ import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Svg.Events exposing (..)
 
-import Message exposing (..)
-
 import Polymino.View exposing (..)
 import Polymino.Model exposing (..)
-import Polymino.Util exposing (rotateCW, rotateCCW)
+import Polymino.Message exposing (..)
+import Polymino.Subscription exposing (polyminoSubsciptions)
+import Polymino.Update exposing (update)
 
-import Keyboard as Keyboard
-import Mouse as Mouse
+import Keyboard
+import Mouse
+import VirtualDom
 
-import Char as Char exposing (KeyCode)
+import Char exposing (KeyCode)
 
 import Html.App as Html
 
@@ -27,96 +28,52 @@ main =
 -- MODEL
 
 type alias Model =
-  { polymino : Polymino
-  , offset : Offset
+  { polyminoModel : PolyminoModel
   }
 
 
-tromino : Polymino
-tromino = Polymino
-  [ Block 1 0
-  , Block 1 1
-  , Block 1 2
-  , Block 1 3
-  , Block 0 2
-  , Block 0 3
-  , Block 2 2
-  , Block 2 3
-  ]
-  ( Block 1 2 )
-  "#14B7CC"
-
-offset = Offset 50 50
-
 init : ( Model, Cmd Msg )
 init =
-  ( Model tromino offset
+  ( Model initialPolyminoModel
   , Cmd.none
   )
+
+-- MESSAGE
+
+type Msg
+  = PolyminoMsg PolyminoSubMsg
+
 
 -- UPDATE
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
-    RCW ->
-      ( { model | polymino = ( rotateCW model.polymino ) }
-      , Cmd.none
-      )
+    PolyminoMsg subMsg ->
+      let
+        (updatedPolyminoModel, polyminoCmd) =
+          Polymino.Update.update subMsg model.polyminoModel
+      in
+        ( { model | polyminoModel = updatedPolyminoModel }
+        , Cmd.map PolyminoMsg polyminoCmd
+        )
 
-    RCCW ->
-      ( { model | polymino = ( rotateCCW model.polymino ) }
-      , Cmd.none
-      )
-
-    MouseMove position ->
-      ( { model | offset = calibrateOffset position model.polymino.anchor }
-      , Cmd.none
-      )
-
-    NoOp ->
-      ( model, Cmd.none )
-
-
-calibrateOffset : Mouse.Position -> Block -> Offset
-calibrateOffset mousePos anchor =
-  Offset
-    ( calculateNewOffset mousePos.x anchor.x )
-    ( calculateNewOffset mousePos.y anchor.y )
-
-calculateNewOffset : Int -> Int -> Int
-calculateNewOffset mousePos anchor =
-  let
-    blockSize = 30
-  in
-    round
-      ( toFloat mousePos
-      - blockSize * ( toFloat anchor + 0.5 )
-      )
 
 -- VIEW
 
 view : Model -> Svg Msg
 view model =
-  svg [ width "800", height "800" ]
-    ( renderPolymino model.offset model.polymino)
+  svg
+    [ width "1200", height "1200" ]
+    [ VirtualDom.map PolyminoMsg ( polyminoView model.polyminoModel ) ]
+
 
 -- SUBSCRIPTIONS
 
+subscriptionList =
+  List.map ( Sub.map PolyminoMsg ) polyminoSubsciptions
+
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Sub.batch
-    [ Keyboard.presses rotationKey
-    , Mouse.moves MouseMove
-    ]
-
-
-rotationKey : KeyCode -> Msg
-rotationKey keyCode =
-  case ( Char.fromCode keyCode ) of
-    'a' ->
-      RCCW
-    'd' ->
-      RCW
-    _ ->
-      NoOp
+  Sub.batch subscriptionList
