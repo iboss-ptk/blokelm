@@ -2,13 +2,15 @@ module Polymino.Update exposing (update)
 
 import Mouse
 
+import Message exposing (..)
+
 import Polymino.Message exposing (..)
 import Polymino.Model exposing (..)
 import Polymino.Util exposing (..)
 import Config exposing (..)
 
 
-update : PolyminoSubMsg -> PolyminoModel -> ( PolyminoModel, Cmd PolyminoSubMsg )
+update : PolyminoSubMsg -> PolyminoModel -> ( PolyminoModel, Cmd Msg )
 update msg model =
   case msg of
     RCW ->
@@ -22,7 +24,7 @@ update msg model =
       )
 
     MouseMove position ->
-      ( { model | offset = calibrateOffset position model.polymino.anchor }
+      ( updateOnMouseMove model position
       , Cmd.none
       )
 
@@ -30,18 +32,6 @@ update msg model =
       ( model, Cmd.none )
 
 
-calibrateOffset : Mouse.Position -> Block -> Offset
-calibrateOffset mousePos anchor =
-  Offset
-    ( calculateNewOffset mousePos.x anchor.x )
-    ( calculateNewOffset mousePos.y anchor.y )
-
-
-calculateNewOffset : Int -> Int -> Int
-calculateNewOffset mousePos anchor =
-  let
-    mousePosf = toFloat mousePos
-    blockSizef = toFloat blockSize
-    anchorf = toFloat anchor
-  in
-    round ( mousePosf - blockSizef * ( anchorf + 0.5 ) )
+updateOnMouseMove : PolyminoModel -> Mouse.Position -> PolyminoModel
+updateOnMouseMove model position =
+  { model | offset = calibrateOffset position model.polymino.anchor }

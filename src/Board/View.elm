@@ -5,7 +5,7 @@ import Svg.Attributes exposing (..)
 import Svg.Events exposing (..)
 
 import Polymino.Model exposing (..)
-import Polymino.View exposing (renderBlock)
+import Polymino.View exposing (renderNormalBlock)
 
 import Config exposing (board)
 
@@ -15,10 +15,10 @@ boardView =
   svg []
     ( List.map
       ( \e ->
-        renderBlock
+        renderNormalBlock
           board.strokeColor
           board.fillColor
-          (Offset 100 100)
+          board.offset
           (Block ( fst e ) ( snd e ) )
       )
       grid20

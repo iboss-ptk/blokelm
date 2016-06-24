@@ -2,6 +2,8 @@ import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Svg.Events exposing (..)
 
+import Message exposing (..)
+
 import Polymino.View exposing (..)
 import Polymino.Model exposing (..)
 import Polymino.Message exposing (..)
@@ -40,11 +42,6 @@ init =
   , Cmd.none
   )
 
--- MESSAGE
-
-type Msg
-  = PolyminoMsg PolyminoSubMsg
-
 
 -- UPDATE
 
@@ -57,7 +54,7 @@ update msg model =
           Polymino.Update.update subMsg model.polyminoModel
       in
         ( { model | polyminoModel = updatedPolyminoModel }
-        , Cmd.map PolyminoMsg polyminoCmd
+        , polyminoCmd
         )
 
 

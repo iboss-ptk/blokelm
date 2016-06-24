@@ -21,17 +21,28 @@ polyminoView model =
 
 renderPolymino : Offset -> Polymino -> List ( Svg a )
 renderPolymino offset polymino =
-  polymino.blocks
-    |> List.map
-      ( renderBlock polyminoStrokeColor polymino.color offset )
+  let
+    render =
+      if (shouldSnap polymino offset) then
+        renderSnappedBlock
+      else
+        renderNormalBlock
+
+  in
+    polymino.blocks
+      |> List.map
+        ( render polyminoStrokeColor polymino.color offset )
 
 
+renderSnappedBlock = renderBlock snapAxis
+renderNormalBlock = renderBlock identity
 
-renderBlock : String -> String -> Offset -> Block -> Svg a
-renderBlock strokeColor fillColor offset block =
+
+renderBlock : ( Int -> Int ) -> String -> String -> Offset -> Block -> Svg a
+renderBlock transform strokeColor fillColor offset block =
   rect
-    [ x ( toRealPos offset.x block.x )
-    , y ( toRealPos offset.y block.y )
+    [ x ( ( toRealPos offset.x block.x ) |> transform |> toString )
+    , y ( ( toRealPos offset.y block.y ) |> transform |> toString )
     , width ( toString blockSize )
     , height ( toString blockSize )
     , fill fillColor
@@ -39,6 +50,5 @@ renderBlock strokeColor fillColor offset block =
     ] []
 
 
-toRealPos : Int -> Int -> String
-toRealPos offset index =
-  toString ( offset + index * blockSize )
+snapAxis : Int -> Int
+snapAxis a = round ( toFloat a / blockSize ) * blockSize

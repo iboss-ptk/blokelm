@@ -28,6 +28,7 @@ type alias Offset =
 type alias PolyminoModel =
   { polymino : Polymino
   , offset : Offset
+  , isSnapping : Bool
   }
 
 
@@ -35,17 +36,12 @@ type alias PolyminoModel =
 
 tromino : Polymino
 tromino = Polymino
-  [ Block 1 0
-  , Block 1 1
-  , Block 1 2
-  , Block 1 3
+  [ Block 0 0
+  , Block 0 1
   , Block 0 2
-  , Block 0 3
-  , Block 2 2
-  , Block 2 3
   ]
-  ( Block 1 2 )
-  "#14B7CC"
+  ( Block 0 1 )
+  "#2ecc71"
 
 
 offset = Offset 50 50
@@ -53,4 +49,4 @@ offset = Offset 50 50
 
 initialPolyminoModel : PolyminoModel
 initialPolyminoModel =
-  PolyminoModel tromino offset
+  PolyminoModel tromino offset False
