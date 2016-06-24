@@ -2,7 +2,7 @@ module Config exposing (..)
 
 blockSize = 30
 
-polyminoStrokeColor = "#ecf0f1"
+polyminoStrokeColor = "white"
 
 board =
   { strokeColor = "#95a5a6"
