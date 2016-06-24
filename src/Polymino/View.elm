@@ -1,6 +1,7 @@
 module Polymino.View exposing (..)
 
 import Polymino.Model exposing (..)
+import Polymino.Collection exposing (..)
 import Polymino.Util as Util exposing (..)
 import Polymino.Message exposing (..)
 import Config exposing (..)

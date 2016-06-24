@@ -4,7 +4,7 @@ import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Svg.Events exposing (..)
 
-import Polymino.Model exposing (..)
+import Polymino.Collection exposing (..)
 import Polymino.View exposing (renderNormalBlock)
 
 import Config exposing (board)

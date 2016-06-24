@@ -1,6 +1,7 @@
 module Polymino.Util exposing (..)
 
-import Polymino.Model exposing (..)
+import Polymino.Collection exposing (..)
+import Polymino.Model exposing (Offset)
 import Config exposing (..)
 
 import Mouse

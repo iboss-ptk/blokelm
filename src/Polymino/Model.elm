@@ -1,17 +1,6 @@
 module Polymino.Model exposing (..)
 
-
-type alias Block =
-  { x : Int
-  , y : Int
-  }
-
-
-type alias Polymino =
-  { blocks : List Block
-  , anchor : Block
-  , color : String
-  }
+import Polymino.Collection exposing (..)
 
 
 type Axis
@@ -34,14 +23,8 @@ type alias PolyminoModel =
 
 -- Init
 
-tromino : Polymino
-tromino = Polymino
-  [ Block 0 0
-  , Block 0 1
-  , Block 0 2
-  ]
-  ( Block 0 1 )
-  "#2ecc71"
+p : Polymino
+p = pentomino12 "#9b59b6"
 
 
 offset = Offset 50 50
@@ -49,4 +32,4 @@ offset = Offset 50 50
 
 initialPolyminoModel : PolyminoModel
 initialPolyminoModel =
-  PolyminoModel tromino offset False
+  PolyminoModel p offset False
