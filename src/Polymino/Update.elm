@@ -5,7 +5,7 @@ import Mouse
 import Polymino.Message exposing (..)
 import Polymino.Model exposing (..)
 import Polymino.Util exposing (..)
-import Polymino.Config exposing (..)
+import Config exposing (..)
 
 
 update : PolyminoSubMsg -> PolyminoModel -> ( PolyminoModel, Cmd PolyminoSubMsg )

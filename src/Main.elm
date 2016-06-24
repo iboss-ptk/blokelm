@@ -8,6 +8,8 @@ import Polymino.Message exposing (..)
 import Polymino.Subscription exposing (polyminoSubsciptions)
 import Polymino.Update exposing (update)
 
+import Board.View exposing (boardView)
+
 import Keyboard
 import Mouse
 import VirtualDom
@@ -65,7 +67,9 @@ view : Model -> Svg Msg
 view model =
   svg
     [ width "1200", height "1200" ]
-    [ VirtualDom.map PolyminoMsg ( polyminoView model.polyminoModel ) ]
+    [ boardView
+    , VirtualDom.map PolyminoMsg ( polyminoView model.polyminoModel )
+    ]
 
 
 -- SUBSCRIPTIONS
