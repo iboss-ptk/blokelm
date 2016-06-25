@@ -18,13 +18,22 @@ polyminoView model =
   case model.polymino of
     Just polymino ->
       svg []
-        [ renderPolymino model.offset polymino
+        [ activePolymino model.offset polymino
         , deck player2
         ]
 
     Nothing ->
       svg []
         [ deck player2 ]
+
+
+activePolymino : Offset -> Polymino -> Svg PolyminoSubMsg
+activePolymino offset polymino =
+  if ( shouldSnap polymino offset ) then
+    renderPolymino offset polymino
+
+  else
+    svg [] []
 
 
 deck : Player -> Svg PolyminoSubMsg
