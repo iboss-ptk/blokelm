@@ -1,6 +1,6 @@
 module Config exposing (..)
 
-blockSize = 30
+blockSize = 20
 
 polyminoStrokeColor = "white"
 

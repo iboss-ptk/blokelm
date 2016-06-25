@@ -1,6 +1,9 @@
 module Polymino.Collection exposing (..)
 
 
+type alias Player = { color : String }
+
+
 type alias Block =
   { x : Int
   , y : Int
@@ -10,7 +13,8 @@ type alias Block =
 type alias Polymino =
   { blocks : List Block
   , anchor : Block
-  , color : String
+  , player : Player
+  , isAvailable : Bool
   }
 
 

@@ -16,6 +16,7 @@ boardView =
     ( List.map
       ( \e ->
         renderNormalBlock
+          "1"
           board.strokeColor
           board.fillColor
           board.offset

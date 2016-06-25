@@ -13,57 +13,60 @@ import Svg.Events exposing (..)
 
 -- View Implementation
 
-polyminoView : PolyminoModel -> Svg a
+polyminoView : PolyminoModel -> Svg PolyminoSubMsg
 polyminoView model =
-  svg []
-    [ deck
-    , svg [] ( renderPolymino model.offset model.polymino )
-    ]
+  case model.polymino of
+    Just polymino ->
+      svg []
+        [ renderPolymino model.offset polymino
+        , deck player2
+        ]
+
+    Nothing ->
+      svg []
+        [ deck player2 ]
 
 
-deck : Svg a
-deck =
-  svg [ x "780", y "120" ]
-    ( col1 ++ col2 ++ col3 ++ col4 )
+deck : Player -> Svg PolyminoSubMsg
+deck player =
+  svg [ x "560", y "120" ]
+    ( [ col1, col2, col3, col4 ]
+      |> List.concatMap ( \c -> c player ) )
 
 
-col1 : List ( Svg a )
-col1 =
+col1 : Player -> List ( Svg PolyminoSubMsg )
+col1 player =
   [ monomino1 , domino1 , tromino1 , tromino2
   , tetromino1, tetromino2, tetromino3, tetromino4
   ]
-    |> List.map ( \p -> p "#9b59b6" )
-    |> renderDeckRow ( Offset 0 0 )
+    |> renderDeckRow player ( Offset 0 0 )
 
 
-col2 : List ( Svg a )
-col2 =
+col2 : Player -> List ( Svg PolyminoSubMsg )
+col2 player =
   [ tetromino5, pentomino1, pentomino2
   , pentomino3, pentomino4, pentomino5
   ]
-    |> List.map ( \p -> p "#9b59b6" )
-    |> renderDeckRow ( Offset ( 5 * blockSize ) 0 )
+    |> renderDeckRow player ( Offset ( 5 * blockSize ) 0 )
 
 
-col3 : List ( Svg a )
-col3 =
+col3 : Player -> List ( Svg PolyminoSubMsg )
+col3 player =
   [ pentomino6, pentomino7, pentomino8
   , pentomino9, pentomino10
   ]
-    |> List.map ( \p -> p "#9b59b6" )
-    |> renderDeckRow ( Offset ( 10 * blockSize ) 0 )
+    |> renderDeckRow player ( Offset ( 10 * blockSize ) 0 )
 
 
-col4 : List ( Svg a )
-col4 =
+col4 : Player -> List ( Svg PolyminoSubMsg )
+col4 player =
   [ pentomino11, pentomino12 ]
-    |> List.map ( \p -> p "#9b59b6" )
-    |> renderDeckRow ( Offset ( 13 * blockSize ) 0 )
+    |> renderDeckRow player ( Offset ( 13 * blockSize ) 0 )
 
 
 -- Helpers
 
-renderPolymino : Offset -> Polymino -> List ( Svg a )
+renderPolymino : Offset -> Polymino -> Svg PolyminoSubMsg
 renderPolymino offset polymino =
   let
     render =
@@ -72,18 +75,21 @@ renderPolymino offset polymino =
       else
         renderNormalBlock
 
+    opacityLevel = if polymino.isAvailable then "1" else "0.3"
+
   in
     polymino.blocks
       |> List.map
-        ( render polyminoStrokeColor polymino.color offset )
+        ( render opacityLevel polyminoStrokeColor polymino.player.color offset )
+      |> svg [ onClick ( Select polymino ) ]
 
 
 renderSnappedBlock = renderBlock snapAxis
 renderNormalBlock = renderBlock identity
 
 
-renderBlock : ( Int -> Int ) -> String -> String -> Offset -> Block -> Svg a
-renderBlock transform strokeColor fillColor offset block =
+renderBlock : ( Int -> Int ) -> String -> String -> String -> Offset -> Block -> Svg a
+renderBlock transform opacityLevel strokeColor fillColor offset block =
   rect
     [ x ( ( toRealPos offset.x block.x ) |> transform |> toString )
     , y ( ( toRealPos offset.y block.y ) |> transform |> toString )
@@ -91,6 +97,7 @@ renderBlock transform strokeColor fillColor offset block =
     , height ( toString blockSize )
     , fill fillColor
     , stroke strokeColor
+    , opacity opacityLevel
     ] []
 
 
@@ -98,12 +105,12 @@ snapAxis : Int -> Int
 snapAxis a = round ( toFloat a / blockSize ) * blockSize
 
 
-renderDeckRow : Offset -> List Polymino -> List ( Svg a )
-renderDeckRow offset polyminoes =
+renderDeckRow : Player -> Offset -> List ( Player -> Bool -> Polymino ) -> List ( Svg PolyminoSubMsg )
+renderDeckRow player offset polyminoes =
   polyminoes
+    |> List.map ( \p -> p player True )
     |> polyminoSpace offset
     |> List.map ( \poff -> renderPolymino ( snd poff ) ( fst poff ) )
-    |> List.concat
 
 
 polyminoSpace : Offset -> List Polymino -> List ( Polymino, Offset )

@@ -14,17 +14,22 @@ update : PolyminoSubMsg -> PolyminoModel -> ( PolyminoModel, Cmd Msg )
 update msg model =
   case msg of
     RCW ->
-      ( { model | polymino = ( rotateCW model.polymino ) }
+      ( { model | polymino = Maybe.map rotateCW model.polymino }
       , Cmd.none
       )
 
     RCCW ->
-      ( { model | polymino = ( rotateCCW model.polymino ) }
+      ( { model | polymino = Maybe.map rotateCCW model.polymino }
       , Cmd.none
       )
 
     MouseMove position ->
       ( updateOnMouseMove model position
+      , Cmd.none
+      )
+
+    Select polymino ->
+      ( { model | polymino = Just polymino }
       , Cmd.none
       )
 
@@ -34,4 +39,9 @@ update msg model =
 
 updateOnMouseMove : PolyminoModel -> Mouse.Position -> PolyminoModel
 updateOnMouseMove model position =
-  { model | offset = calibrateOffset position model.polymino.anchor }
+  case model.polymino of
+    Just p ->
+      { model | offset = calibrateOffset position p.anchor }
+
+    Nothing ->
+      model

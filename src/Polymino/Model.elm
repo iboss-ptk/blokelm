@@ -15,7 +15,8 @@ type alias Offset =
 
 
 type alias PolyminoModel =
-  { polymino : Polymino
+  { polymino : Maybe Polymino
+  , deck : List Polymino
   , offset : Offset
   , isSnapping : Bool
   }
@@ -23,8 +24,14 @@ type alias PolyminoModel =
 
 -- Init
 
+player1 = Player "#e74c3c"
+player2 = Player "#f1c40f"
+player3 = Player "#1abc9c"
+player4 = Player "#3498db"
+
+
 p : Polymino
-p = pentomino12 "#9b59b6"
+p = pentomino12 player1 True
 
 
 offset = Offset 50 50
@@ -32,4 +39,4 @@ offset = Offset 50 50
 
 initialPolyminoModel : PolyminoModel
 initialPolyminoModel =
-  PolyminoModel p offset False
+  PolyminoModel Nothing [] offset False
