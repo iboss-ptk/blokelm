@@ -50,6 +50,7 @@ boundaryOf polymino offset =
   let
     xs = List.map (\bs -> bs.x) polymino.blocks
     ys = List.map (\bs -> bs.y) polymino.blocks
+
   in
     Boundary
       { min = toRealPos offset.x ( minInt xs )

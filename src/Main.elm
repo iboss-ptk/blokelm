@@ -63,7 +63,7 @@ update msg model =
 view : Model -> Svg Msg
 view model =
   svg
-    [ width "1200", height "1200" ]
+    [ width "1500", height "1200" ]
     [ boardView
     , VirtualDom.map PolyminoMsg ( polyminoView model.polyminoModel )
     ]
